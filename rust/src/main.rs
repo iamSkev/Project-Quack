@@ -35,10 +35,7 @@ fn get_tick_time(tick: &String) -> Option<BigDecimal> {
         (String::from("idk"), BigDecimal::from_str("0").unwrap())
         ]);
     
-    match tick_times.get(tick).clone() {
-        Some(x) => Some(x.clone()),
-        _ => None
-    }
+    tick_times.get(tick).cloned()
         
 }
 
@@ -62,10 +59,7 @@ fn get_suffix_amount(suffix: &String) -> Option<BigDecimal> {
         (String::from("qi"), BigDecimal::from_str("1_000_000_000_000_000_000").unwrap())
         ]);
     
-    match suffix_amount.get(suffix).clone() {
-        Some(x) => Some(x.clone()),
-        _ => None
-    }
+    suffix_amount.get(suffix).cloned()
 
 }
 
@@ -105,7 +99,7 @@ fn converter(stat: &String) -> Option<BigDecimal> {
         }
     }
 
-    let converted_number = BigDecimal::from_str(&(&number).trim());
+    let converted_number = BigDecimal::from_str(number.trim());
 
     if converted_number.is_err(){
         return None
@@ -142,7 +136,7 @@ impl Stats {
         let time_result: String;
         let mut amt_of_time = vec![];
 
-        let tick_amt = get_tick_time(&tick);
+        let tick_amt = get_tick_time(tick);
 
         let amt_to_get = &(amt - current_amt);
 
@@ -160,11 +154,11 @@ impl Stats {
         let hours: BigDecimal;
         let mut days: BigDecimal;
 
-        let seconds: BigDecimal;
-        let minutes: BigDecimal;
-        let microseconds: BigDecimal;
-        let milliseconds: BigDecimal;
-        let nanoseconds: BigDecimal;
+        
+        
+        
+        
+        
         
         if  rounded_stats >= day_in_hours {
             
@@ -186,27 +180,27 @@ impl Stats {
             amt_of_time.push(correct_grammar(&hours, "hour", &one));
         }
 
-        let rounded_minutes: BigDecimal;
-        let rounded_seconds: BigDecimal;
-        let rounded_milliseconds: BigDecimal;
-        let rounded_microseconds: BigDecimal;
-        let rounded_nanoseconds: BigDecimal;
-
-        minutes = (&stats - &rounded_stats) * &sixty;
         
-        rounded_minutes = round(&minutes);
+        
+        
+        
+        
 
-        seconds = (&minutes - &rounded_minutes) * &sixty;
-        rounded_seconds = round(&seconds);
+        let minutes: BigDecimal = (&stats - &rounded_stats) * &sixty;
+        
+        let rounded_minutes: BigDecimal = round(&minutes);
 
-        milliseconds = (&seconds - &rounded_seconds) * &thousand;
-        rounded_milliseconds = round(&milliseconds);
+        let seconds: BigDecimal = (&minutes - &rounded_minutes) * &sixty;
+        let rounded_seconds: BigDecimal = round(&seconds);
 
-        microseconds = (&milliseconds - &rounded_milliseconds) * &thousand;
-        rounded_microseconds = round(&microseconds);
+        let milliseconds: BigDecimal = (&seconds - &rounded_seconds) * &thousand;
+        let rounded_milliseconds: BigDecimal = round(&milliseconds);
 
-        nanoseconds = (&microseconds - &rounded_microseconds) * &thousand;
-        rounded_nanoseconds = round(&nanoseconds);
+        let microseconds: BigDecimal = (&milliseconds - &rounded_milliseconds) * &thousand;
+        let rounded_microseconds: BigDecimal = round(&microseconds);
+
+        let nanoseconds: BigDecimal = (&microseconds - &rounded_microseconds) * &thousand;
+        let rounded_nanoseconds: BigDecimal = round(&nanoseconds);
 
         if rounded_minutes > zero {
             amt_of_time.push(correct_grammar(&rounded_minutes, "minute", &one));
@@ -333,15 +327,11 @@ Here they are:
         let value = converter(&goal);
         if value.is_some() {
             converted_goal = value.unwrap();
-        } else {
-            if let Net::Value { value } = net("How much is your goal?: ", true) {
-                converted_goal = value;
-            }
-        }
-    } else {
-        if let Net::Value { value } = net("How much is your goal?: ", true) {
+        } else if let Net::Value { value } = net("How much is your goal?: ", true) {
             converted_goal = value;
         }
+    } else if let Net::Value { value } = net("How much is your goal?: ", true) {
+        converted_goal = value;
     }
 
     let mut current_amount = String::new();
@@ -357,15 +347,11 @@ Here they are:
         let value = converter(&current_amount);
         if value.is_some() {
             converted_current_amount = value.unwrap();
-        } else {
-            if let Net::Value { value } = net("How much is your goal?: ", true) {
-                converted_current_amount = value;
-            }
-        }
-    } else {
-        if let Net::Value { value } = net("\nHow much do you currently have?: ", true) {
+        } else if let Net::Value { value } = net("How much is your goal?: ", true) {
             converted_current_amount = value;
         }
+    } else if let Net::Value { value } = net("\nHow much do you currently have?: ", true) {
+        converted_current_amount = value;
     }
 
     let mut per_tick = String::new();
@@ -381,15 +367,11 @@ Here they are:
         let value = converter(&per_tick);
         if value.is_some() {
             converted_per_tick = value.unwrap();
-        } else {
-            if let Net::Value { value } = net("\nHow much do you get per tick?: ", true) {
-                converted_per_tick = value;
-            }
-        }
-    } else {
-        if let Net::Value { value } = net("\nHow much do you get per tick?: ", true) {
+        } else if let Net::Value { value } = net("\nHow much do you get per tick?: ", true) {
             converted_per_tick = value;
         }
+    } else if let Net::Value { value } = net("\nHow much do you get per tick?: ", true) {
+        converted_per_tick = value;
     }
 
     let mut tick_time = String::new();
@@ -405,15 +387,11 @@ Here they are:
         let value = get_tick_time(&tick_time.trim().to_ascii_lowercase());
         if value.is_some() {
             converted_tick_time = tick_time.trim().to_ascii_lowercase();
-        } else {
-            if let Net::Tick { value } = net("\nWhat stat are you training?(fs, bt, psy, idk): ", false) {
-                converted_tick_time = value.trim().to_ascii_lowercase();
-            }
-        }
-    } else {
-        if let Net::Tick{ value } = net("\nWhat stat are you training?(fs, bt, psy, idk): ", false) {
+        } else if let Net::Tick { value } = net("\nWhat stat are you training?(fs, bt, psy, idk): ", false) {
             converted_tick_time = value.trim().to_ascii_lowercase();
         }
+    } else if let Net::Tick{ value } = net("\nWhat stat are you training?(fs, bt, psy, idk): ", false) {
+        converted_tick_time = value.trim().to_ascii_lowercase();
     }
 
 
@@ -437,9 +415,9 @@ Here they are:
             }
         }
         
-        return total_time
+        total_time
     } else {
-        let stat = Stats::new(converted_goal, converted_current_amount, converted_per_tick, converted_tick_time.to_string());
+        let stat = Stats::new(converted_goal, converted_current_amount, converted_per_tick, converted_tick_time);
         format!("\nIt would take rougly around {}.", stat.calculate())
     }
 

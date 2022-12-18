@@ -1,2 +1,2 @@
 # Rust
-The executable will be in the target/
+The spts_calc executable will be in the `target/release` directory
