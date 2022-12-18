@@ -175,7 +175,6 @@ func calculate(apt, amt_to_get, current_amt *big.Float, tick string) string {
 	var rounded_microseconds *big.Float = big.NewFloat(0)
 	var rounded_nanoseconds *big.Float = big.NewFloat(0)
 
-	new(big.Float).Sub(stats, rounded_stats)
 	minutes = new(big.Float).Mul((new(big.Float).Sub(stats, rounded_stats)), big.NewFloat(60))
 	throwaway, _ = minutes.Int(nil)
 	rounded_minutes.SetInt(throwaway)
